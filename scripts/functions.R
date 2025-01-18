@@ -15,7 +15,7 @@ graphLines <- function(x, d2_dist){
   ) |>
     setNames(c('quad', 'longitude', 'latitude'))
   
-  neighborhood_object <- dnearneigh(x, d1 = 1, d2 = d2_dist) 
+  neighborhood_object <- spdep::dnearneigh(x, d1 = 1, d2 = d2_dist) 
   
   links <- neighborhood_object %>% 
     # unlist all of the neighborhoods within the distance seached by
