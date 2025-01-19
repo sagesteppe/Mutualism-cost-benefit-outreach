@@ -99,7 +99,7 @@ int_map <- ggplot() +
     lwd = 0.05, alpha = 0.6, color = "white") +
   
   scale_fill_brewer(palette = "Set3", direction = - 1) +
-  labs(title = "Possible genetic neighborhoods (demes)\nof Coast Goldenrod at Lanphere & Ma-le'l Dunes") +
+  labs(title = "Possible genetic neighborhoods (demes) of\nCoast Goldenrod at Lanphere & Ma-le'l Dunes") +
   theme_void() +
   theme(
     legend.position = 'none',
@@ -107,16 +107,62 @@ int_map <- ggplot() +
     )
   
 
-blurb = paste("Each point represents a plot where plants of Coast Goldenrod\n",
-              "(Solidago spathulata) were observed. This population of plants\n",
-              "may be further subdivided into genetic neighborhoods of more\n",
-              "or less related individuals")
+blurb = paste(
+  "Each point represents a plot where Coast Goldenrod (Solidago \n",
+  "spathulata) plants were observed. Nearly all populations may be\n",
+  "further subdivided into genetic neighborhoods, or demes, each\n",
+  "compromised of more closely related individuals. However, the\n",
+  "identification of demes requires molecular approaches which\n",
+  "while becoming cheaper and faster to implement, still have\n",
+  "significant bottlenecks to high throughput usage in wildland\n",
+  "settings. On the other hand the rapid development of\n",
+  "computational capacities and algorithms offer an\n",
+  "alternative approaches which can be rapidly scaled\n",
+  "for the over 350,000 vascular plant species around\n", 
+  "around the globe.\n",
+  "\n",
+  "Using the distances regularly travelled by insect\n", 
+  "pollinators, the portions of a landscape which\n",
+  "have the focal plant species growing in them\n", 
+  "can be clustered into provisional demes.\n",
+  "\n", 
+  "In this project we use field, and LiDAR, data\n", 
+  "alongsides statistical bagging and boosting\n",
+  "methods to estimate the abundance of Coast\n",
+  "Goldenrod across a landscape in Northern\n",
+  "California. We then use these estimates to\n",
+  "gauage how the populations of solitary\n", 
+  "bee which interacts with the Coast\n", 
+  "Goldenrod may be limited by the\n",
+  "availabilty of this species"
+  )
 
-explan <- ggplot() + 
-  annotate("text", x = 0, y = 0, size=3, label = blurb) + 
-  theme_void()
+
+explan <- ggplot()   + 
+ theme_void() + 
+  xlim(0, 5) + 
+  annotate("text", x = 0, y = 0, size=2, label = blurb, hjust = 0, color = '#57ACDC')
 
 
+blurb1 = paste(
+  "Here we have naively clusted portions\n",
+  "of this population using DBSCAN set\n",
+  "to an eps of 110 meters. The edges\n",
+  "between the nodes cover distances\n",
+  "of 100-400m. While the entire\n",
+  "population covers a larger expanse, just\n", 
+  "a few clusters contain most individuals.\n", 
+  "For applications such as ex situ conservation\n", 
+  "these clusters may prove the most viable\n", 
+  "to sample in order to obtain an adequate\n",
+  "amount of a populations allelic diversity"
+)
+
+blurb1 <- ggplot()   + 
+    theme_void() + 
+    xlim(0, 5) + 
+    annotate("text", x = 5, y = 0, size=2, label = blurb1, hjust = 1, color = '#57ACDC')
+  
 # so the number of rows counts DOWN from the top....i.e. top is 0 ,bottom
 # can be set anywhere, but the fn doesn't really seem to respect floats (?)
 # so run as ints. 
@@ -124,12 +170,14 @@ explan <- ggplot() +
 # to deal with aspect ratios, the ranges of top and bottom should be UNEQUAL
 # for the long plots here, we need about 3:1
 layout <- c(
-  area(t = 0, l = 0, b = 75, r = 25), # da map
-  area(t = 40, l = 10, b = 65, r = 30), # da bars 
-  area(t = 0, l = 0, b = 55, r = 10)
+  area(t = 0, l = 0, b = 75, r = 25), # the map
+  area(t = 40, l = 10, b = 65, r = 30), # the bars 
+  area(t = 0, l = 1, b = 60, r = 13), # big text left
+  area(t = 2, l = 16, b = 38, r = 25)
 )
 
-p_hdi_atlas <- int_map + int_col + explan + plot_layout(design = layout) 
+p_hdi_atlas <- int_map + int_col + explan + blurb1 +
+  plot_layout(design = layout) 
 p_hdi_atlas
 
 
@@ -155,6 +203,6 @@ interactive_plot <- girafe(
   )
 )
 
-htmltools::save_html(interactive_plot, "../plots/ggiraph-6.html")
+htmltools::save_html(interactive_plot, "../plots/DBSCAN-based-demes.html")
 
   
