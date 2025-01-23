@@ -201,4 +201,6 @@ interactive_plot <- girafe(
   )
 )
 
-htmltools::save_html(interactive_plot, "../index.html")
+htmltools::save_html(interactive_plot, "../plots/DBSCAN-based-demes.html")
+
+  

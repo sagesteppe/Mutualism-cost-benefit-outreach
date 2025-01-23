@@ -1,13 +1,28 @@
-setwd('~/Documents/Mutualism-cost-benefit-outreach/scripts')
-source('functions.R')
+---
+title: "Dune(s)"
+format: 
+  revealjs:
+    theme: black
+    highlight: pygments
+    preview-links: auto
+---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, comment = "", fig.align="center")
+```
+
+```{r load libraries}
 library(sf)
 library(ggiraph)
 library(tidyverse)
 library(patchwork)
 library(RColorBrewer)
+source('./scripts/functions.R')
+```
 
-plants <- st_read("../data/solidago_presences/solidago_presences.shp") |>
+```{r Prepare data}
+
+plants <- st_read("./data/solidago_presences/solidago_presences.shp", quiet = TRUE) |>
   group_by(CmbndID) |>
   summarize(
     Presence = max(Presenc), 
@@ -21,7 +36,11 @@ occs <- mutate(
   occs, 
   cluster = fpc::dbscan(st_coordinates(occs), eps = 110, MinPts = 3)$cluster, 
   .before = geometry) 
-  
+
+```
+
+```{r Generate convex hulls over clusters identified by DBSCAN}
+
 # create concave hulls to encapsulate our clusters. 
 hulls <- occs %>% 
    # filter(cluster != 0) %>% 
@@ -37,7 +56,6 @@ link_collection <- graphLines(occs, d2_dist = 500) |>
   filter(length > 100 & length < 400)
 
 # we will show what estimated proportion of the population is within each hull. 
-
 clust_ct <- occs |>
   group_by(cluster) |>
   st_drop_geometry() |>
@@ -51,7 +69,6 @@ hulls <- left_join(hulls, clust_ct) |>
 
 rm(clust_ct)
 
-
 # these will plot in order by the putative deme with the most plants. 
 # plants not assigned to a deme must be plotted last
 ord <- hulls[ order(hulls$Total_pls), 'cluster'] |> pull(cluster)
@@ -63,9 +80,11 @@ ord <- c(
 hulls <- mutate(hulls, cluster = factor(cluster, ord))
 hulls1 <- filter(hulls, cluster != 'none')
   
+```
 
 
-# https://r-graph-gallery.com/package/ggiraph.html
+
+```{r Create the barchart}
 
 int_col <- 
   ggplot(data = st_drop_geometry(hulls), aes(Total_pls, y = cluster, fill = cluster)) +
@@ -88,6 +107,11 @@ int_col <-
     panel.grid.major = element_line(size = 0.02)
     )
 
+```
+
+
+```{r Create the map}
+
 int_map <- ggplot() +
   geom_sf(data = link_collection, aes(color = length), alpha = 0.5, lwd = 0.1) + 
   geom_sf(data = occs,  color = "#9C27B0") +
@@ -103,8 +127,11 @@ int_map <- ggplot() +
     legend.position = 'none',
     plot.title = element_text(hjust = 0.5, colour = '#272AB0')
     )
-  
 
+```
+
+
+```{r Write the blurbs}
 blurb = paste(
   "Each point represents a plot where Coast Goldenrod (Solidago \n",
   "spathulata) plants were observed. Nearly all populations may be\n",
@@ -135,13 +162,6 @@ blurb = paste(
   "availabilty of this species"
   )
 
-
-explan <- ggplot()   + 
- theme_void() + 
-  xlim(0, 5) + 
-  annotate("text", x = 0, y = 0, size=2, label = blurb, hjust = 0, color = '#57ACDC')
-
-
 blurb1 = paste(
   "Here we have naively clusted portions\n",
   "of this population using DBSCAN set\n",
@@ -156,17 +176,21 @@ blurb1 = paste(
   "amount of a populations allelic diversity"
 )
 
+explan <- ggplot()   + 
+ theme_void() + 
+  xlim(0, 5) + 
+  annotate("text", x = 0, y = 0, size=2, label = blurb, hjust = 0, color = '#57ACDC')
+
 blurb1 <- ggplot()   + 
     theme_void() + 
     xlim(0, 5) + 
     annotate("text", x = 5, y = 0, size=2, label = blurb1, hjust = 1, color = '#57ACDC')
-  
-# so the number of rows counts DOWN from the top....i.e. top is 0 ,bottom
-# can be set anywhere, but the fn doesn't really seem to respect floats (?)
-# so run as ints. 
 
-# to deal with aspect ratios, the ranges of top and bottom should be UNEQUAL
-# for the long plots here, we need about 3:1
+```
+  
+
+```{r}
+
 layout <- c(
   area(t = 0, l = 0, b = 75, r = 25), # the map
   area(t = 40, l = 10, b = 65, r = 30), # the bars 
@@ -176,8 +200,6 @@ layout <- c(
 
 p_hdi_atlas <- int_map + int_col + explan + blurb1 +
   plot_layout(design = layout) 
-p_hdi_atlas
-
 
 tooltip_css <- "
   background: linear-gradient(145deg, #f0f0f0, #e6e6e6);
@@ -201,4 +223,11 @@ interactive_plot <- girafe(
   )
 )
 
-htmltools::save_html(interactive_plot, "../index.html")
+#htmltools::save_html(interactive_plot, "../plots/DBSCAN-based-demes.html")
+```
+
+
+```{r, out.width='400px'}
+interactive_plot
+```
+
