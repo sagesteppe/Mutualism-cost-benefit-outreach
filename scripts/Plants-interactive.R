@@ -1,4 +1,4 @@
-setwd('~/Documents/Mutualism-cost-benefit-outreach/scripts')
+setwd('~/Documents/assoRted/Mutualism-cost-benefit-outreach/scripts')
 source('functions.R')
 
 library(sf)
@@ -81,6 +81,7 @@ int_col <-
   theme(
     legend.position = 'none', 
     aspect.ratio = 2/1.25,
+    theme(plot.margin=grid::unit(c(0,0,0,0), "mm")),
     axis.title = element_text(colour = '#276BB0', size = 7), 
     axis.text = element_text(colour = '#57ACDC', size = 7),
     plot.title  = element_text(colour = '#272AB0', size = 8, hjust = 0.5),
@@ -110,13 +111,13 @@ blurb = paste(
   "spathulata) plants were observed. Nearly all populations may be\n",
   "further subdivided into genetic neighborhoods, or demes, each\n",
   "compromised of more closely related individuals. However, the\n",
-  "identification of demes requires molecular approaches which\n",
+  "identification of demes requires molecular approaches, which\n",
   "while becoming cheaper and faster to implement, still have\n",
   "significant bottlenecks to high throughput usage in wildland\n",
   "settings. On the other hand the rapid development of\n",
   "computational capacities and algorithms offer an\n",
-  "alternative approaches which can be rapidly scaled\n",
-  "for the over 350,000 vascular plant species around\n", 
+  "alternative approach which can be rapidly scaled\n",
+  "for the more than 350,000 vascular plant species\n", 
   "around the globe.\n",
   "\n",
   "Using the distances regularly travelled by insect\n", 
@@ -124,15 +125,15 @@ blurb = paste(
   "have the focal plant species growing in them\n", 
   "can be clustered into provisional demes.\n",
   "\n", 
-  "In this project we use field, and LiDAR, data\n", 
-  "alongsides statistical bagging and boosting\n",
+  "In this project we use field and LiDAR data\n", 
+  "alongsides several machine learning\n",
   "methods to estimate the abundance of Coast\n",
   "Goldenrod across a landscape in Northern\n",
   "California. We then use these estimates to\n",
-  "gauage how the populations of solitary\n", 
+  "gauge how the populations of solitary\n", 
   "bee which interacts with the Coast\n", 
   "Goldenrod may be limited by the\n",
-  "availabilty of this species"
+  "availabilty of this species abundance"
   )
 
 
@@ -150,7 +151,7 @@ blurb1 = paste(
   "of 100-400m. While the entire\n",
   "population covers a larger expanse, just\n", 
   "a few clusters contain most individuals.\n", 
-  "For applications such as ex situ conservation\n", 
+  "For applying ex situ conservation\n", 
   "these clusters may prove the most viable\n", 
   "to sample in order to obtain an adequate\n",
   "amount of a populations allelic diversity"
@@ -169,7 +170,7 @@ blurb1 <- ggplot()   +
 # for the long plots here, we need about 3:1
 layout <- c(
   area(t = 0, l = 0, b = 75, r = 25), # the map
-  area(t = 40, l = 10, b = 65, r = 30), # the bars 
+  area(t = 40, l = 10, b = 65, r = 26), # the bars 
   area(t = 0, l = 1, b = 60, r = 13), # big text left
   area(t = 2, l = 16, b = 38, r = 25)
 )
